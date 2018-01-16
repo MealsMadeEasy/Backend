@@ -1,0 +1,1 @@
+web: java -jar build/libs/mealsmadeeasy-1.0.jar

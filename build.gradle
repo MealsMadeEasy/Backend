@@ -1,0 +1,60 @@
+buildscript {
+    ext.kotlin_version = '1.2.10'
+    ext.ktor_version = '0.4.0'
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+jar {
+    baseName = 'mealsmadeeasy'
+    version = '1.0'
+    mainClassName = 'com.mealsmadeeasy.ApplicationKt'
+    manifest {
+        attributes(
+                'Main-Class': mainClassName
+        )
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url  "http://dl.bintray.com/kotlin/ktor" }
+    maven { url "https://dl.bintray.com/kotlin/kotlinx" }
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+    compile "org.jetbrains.ktor:ktor-core:$ktor_version"
+    compile "org.jetbrains.ktor:ktor-netty:$ktor_version"
+
+    compile "com.squareup.moshi:moshi:1.5.0"
+    compile "com.squareup.moshi:moshi-kotlin:1.5.0"
+
+    compile 'com.google.firebase:firebase-admin:5.3.1'
+}
