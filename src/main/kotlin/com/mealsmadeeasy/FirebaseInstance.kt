@@ -37,8 +37,9 @@ object FirebaseInstance {
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private fun envVar(name: String): String {
-        return System.getenv(name)
-                ?: throw RuntimeException("$name environment variable not set")
+        System.getenv(name)?.let { return it }
+        System.out.println("[WARNING] $name environment variable is not set")
+        throw RuntimeException("$name environment variable is not set")
     }
 
 }
