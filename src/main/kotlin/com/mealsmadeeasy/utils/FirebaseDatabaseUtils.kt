@@ -7,7 +7,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.tasks.Task
 import java.util.concurrent.Semaphore
 
-
 inline fun <reified T> DatabaseReference.subscribe(noinline onNext: (List<T>) -> Unit) {
     addValueEventListener(TableListener.of(onNext))
 }
@@ -19,7 +18,7 @@ inline fun <reified T> DatabaseReference.first(crossinline onNext: (T) -> Unit) 
         }
 
         override fun onDataChange(snapshot: DataSnapshot) {
-            onNext(snapshot.value as T)
+            onNext(snapshot.getValue(T::class.java))
             removeEventListener(this)
         }
     })
