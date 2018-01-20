@@ -3,6 +3,10 @@ package com.mealsmadeeasy.utils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 
+inline fun <reified T> String?.parseJson(): T? {
+    return Json.converterOf<T>().fromJson(this.orEmpty())
+}
+
 object Json {
 
     val moshi: Moshi = Moshi.Builder().build()

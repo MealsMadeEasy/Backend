@@ -2,6 +2,7 @@ package com.mealsmadeeasy
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseCredentials
 import com.google.firebase.database.FirebaseDatabase
 
@@ -35,6 +36,8 @@ object FirebaseInstance {
     }
 
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private fun envVar(name: String): String {
         System.getenv(name)?.let { return it }
