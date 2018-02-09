@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
                 ))
             }
 
-            post("user/profile") {
+            post("/user/profile") {
                 call.sendResponse(UserStore.updatePrivateUserProfile(
                         userToken = call.request.headers[AUTH_HEADER_KEY],
                         profile = call.receive<String>().parseJson()
