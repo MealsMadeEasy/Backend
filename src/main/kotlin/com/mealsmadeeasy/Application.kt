@@ -1,5 +1,6 @@
 package com.mealsmadeeasy
 
+import com.mealsmadeeasy.data.MealStore
 import com.mealsmadeeasy.data.UserStore
 import com.mealsmadeeasy.endpoint.sendResponse
 import com.mealsmadeeasy.utils.firstBlocking
@@ -38,6 +39,12 @@ fun main(args: Array<String>) {
                 call.sendResponse(UserStore.updatePrivateUserProfile(
                         userToken = call.request.headers[AUTH_HEADER_KEY],
                         profile = call.receive<String>().parseJson()
+                ))
+            }
+
+            get("/meals/suggested") {
+                call.sendResponse(MealStore.getSuggestedMeals(
+                        userToken = call.request.headers[AUTH_HEADER_KEY]
                 ))
             }
 
