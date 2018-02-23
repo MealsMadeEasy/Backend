@@ -1,5 +1,6 @@
 package com.mealsmadeeasy
 
+import com.mealsmadeeasy.data.MealPlanStore
 import com.mealsmadeeasy.data.MealStore
 import com.mealsmadeeasy.data.UserStore
 import com.mealsmadeeasy.endpoint.sendResponse
@@ -39,6 +40,19 @@ fun main(args: Array<String>) {
                 call.sendResponse(UserStore.updatePrivateUserProfile(
                         userToken = call.request.headers[AUTH_HEADER_KEY],
                         profile = call.receive<String>().parseJson()
+                ))
+            }
+
+            get("/user/plan") {
+                call.sendResponse(MealPlanStore.getMealPlan(
+                        userToken = call.request.headers[AUTH_HEADER_KEY]
+                ))
+            }
+
+            post("/user/plan") {
+                call.sendResponse(MealPlanStore.updateMealPlan(
+                        userToken = call.request.headers[AUTH_HEADER_KEY],
+                        mealPlan =  call.receive<String>().parseJson()
                 ))
             }
 

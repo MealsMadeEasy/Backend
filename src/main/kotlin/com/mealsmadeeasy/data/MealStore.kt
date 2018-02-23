@@ -8,6 +8,12 @@ object MealStore {
 
     private val providers: List<MealProvider> = listOf(FirebaseMealProvider)
 
+    fun findMealById(mealId: String): Meal? {
+        return providers.asSequence()
+                .mapNotNull { it.findMealById(mealId) }
+                .firstOrNull()
+    }
+
     fun getSuggestedMeals(userToken: String?): Response {
         return AuthManager.ensureValidUser(userToken) { userId ->
             getRandomMeals(count = 10)
@@ -27,6 +33,8 @@ object MealStore {
     interface MealProvider {
 
         fun getRandomMeals(count: Int): List<Meal>
+
+        fun findMealById(mealId: String): Meal?
 
     }
 
