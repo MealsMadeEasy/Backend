@@ -1,12 +1,13 @@
 package com.mealsmadeeasy.data
 
 import com.mealsmadeeasy.auth.AuthManager
+import com.mealsmadeeasy.data.edamam.EdamamMealProvider
 import com.mealsmadeeasy.endpoint.Response
 import com.mealsmadeeasy.model.Meal
 
 object MealStore {
 
-    private val providers: List<MealProvider> = listOf(FirebaseMealProvider)
+    private val providers = listOf(FirebaseMealProvider, EdamamMealProvider)
 
     fun findMealById(mealId: String): Meal? {
         return providers.asSequence()
