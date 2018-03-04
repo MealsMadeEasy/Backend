@@ -62,6 +62,10 @@ fun main(args: Array<String>) {
                 ))
             }
 
+            get("/meal/{id}") {
+                call.sendResponse(MealStore.getMeal(call.parameters["id"]))
+            }
+
             get("/dbtest/") {
                 call.respondText(FirebaseInstance.database.getReference("test")
                         .firstBlocking<String>().orEmpty())
