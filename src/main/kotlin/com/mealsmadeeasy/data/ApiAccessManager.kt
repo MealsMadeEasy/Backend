@@ -9,7 +9,7 @@ import org.jetbrains.ktor.http.HttpStatusCode
 
 object ApiAccessManager {
 
-    private const val HEADER_TEST_AUTH = "ForceUsingTheNewApiValidationCheckToTestMyCode_DoNotPushThisFlagIntoAProductionBuild"
+    private const val HEADER_TEST_AUTH = "ForceUsingTheNewApiValidationCheckToTestMyCodeDoNotPushThisFlagIntoAProductionBuild"
     private const val APP_ID_HEADER = "ApplicationID"
     private const val APP_KEY_HEADER = "ApiKey"
 
