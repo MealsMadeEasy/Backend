@@ -1,6 +1,6 @@
 package com.mealsmadeeasy.data.edamam.model
 
-data class Recipe(
+data class EdamamRecipe(
         val uri: String,
         val label: String,
         val image: String,
@@ -9,7 +9,7 @@ data class Recipe(
         val yield: Int,
         val calories: Float,
         val totalWeight: Float,
-        val ingredients: List<Ingredient>,
+        val ingredients: List<EdamamIngredient>,
         val dietLabels: List<DietLabels>,
         val healthLabels: List<HealthLabels>
 )

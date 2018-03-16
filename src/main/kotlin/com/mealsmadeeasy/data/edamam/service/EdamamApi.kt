@@ -9,7 +9,7 @@ import com.squareup.moshi.Moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-const val BASE_URL = "https://api.edamam.com"
+private const val BASE_URL = "https://api.edamam.com"
 
 fun createEdamamApi(): EdamamService= Retrofit.Builder()
         .apply {

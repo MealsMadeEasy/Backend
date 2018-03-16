@@ -1,6 +1,6 @@
 package com.mealsmadeeasy.data.edamam.model
 
-data class Ingredient(
+data class EdamamIngredient(
         val uri: String,
         val quantity: Float,
         val measure: Measure,

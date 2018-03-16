@@ -1,5 +1,6 @@
 package com.mealsmadeeasy.data.edamam.service
 
+import com.mealsmadeeasy.data.edamam.model.EdamamRecipe
 import com.mealsmadeeasy.data.edamam.model.EdamamSearchResults
 import retrofit2.Call
 import retrofit2.http.GET
@@ -24,9 +25,7 @@ interface EdamamService {
     fun findById(
             @Query("r") id: String,
             @Query("app_id") appId: String = appId(),
-            @Query("app_key") appKey: String = appKey(),
-            @Query("from") firstIdx: Int = 0,
-            @Query("to") lastIdx: Int = firstIdx + DEFAULT_RESULTS_SIZE
-    ): Call<EdamamSearchResults>
+            @Query("app_key") appKey: String = appKey()
+    ): Call<List<EdamamRecipe>>
 
 }

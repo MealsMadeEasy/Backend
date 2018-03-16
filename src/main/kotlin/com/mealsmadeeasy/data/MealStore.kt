@@ -4,6 +4,7 @@ import com.mealsmadeeasy.auth.AuthManager
 import com.mealsmadeeasy.data.edamam.EdamamMealProvider
 import com.mealsmadeeasy.endpoint.Response
 import com.mealsmadeeasy.model.Meal
+import com.mealsmadeeasy.model.Recipe
 import org.jetbrains.ktor.http.HttpStatusCode
 
 object MealStore {
@@ -49,11 +50,32 @@ object MealStore {
         )
     }
 
+    fun getRecipe(id: String?): Response {
+        if (id == null) {
+            return Response.ofError(
+                    message = "No ID was provided",
+                    code = HttpStatusCode.BadRequest
+            )
+        }
+
+        providers.asSequence()
+                .mapNotNull { it.getRecipeForMeal(id) }
+                .firstOrNull()
+                ?.let { return Response.ofJson(it) }
+
+        return Response.ofError(
+                message = "No recipe was found for meal with ID \"$id\"",
+                code = HttpStatusCode.NotFound
+        )
+    }
+
     interface MealProvider {
 
         fun getRandomMeals(count: Int): List<Meal>
 
         fun findMealById(mealId: String): Meal?
+
+        fun getRecipeForMeal(mealId: String): Recipe?
 
     }
 

@@ -77,6 +77,11 @@ fun main(args: Array<String>) {
                         ?: MealStore.getMeal(call.parameters["id"])
                 )
             }
+
+            get("/recipe/{id}") {
+                call.sendResponse(ApiAccessManager.requireApiAccess(call)
+                        ?: MealStore.getRecipe(call.parameters["id"]))
+            }
         }
     }.start(wait = true)
 }
