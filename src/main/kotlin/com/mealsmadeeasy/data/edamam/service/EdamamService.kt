@@ -22,6 +22,37 @@ interface EdamamService {
     ): Call<EdamamSearchResults>
 
     @GET("search")
+    fun searchDietFilter(
+            @Query("q") query: String,
+            @Query("app_id") appId: String = appId(),
+            @Query("app_key") appKey: String = appKey(),
+            @Query("from") firstIdx: Int = 0,
+            @Query("to") lastIdx: Int = firstIdx + DEFAULT_RESULTS_SIZE,
+            @Query("diet") dietLabel: String
+    ): Call<EdamamSearchResults>
+
+    @GET("search")
+    fun searchHealthFilter(
+            @Query("q") query: String,
+            @Query("app_id") appId: String = appId(),
+            @Query("app_key") appKey: String = appKey(),
+            @Query("from") firstIdx: Int = 0,
+            @Query("to") lastIdx: Int = firstIdx + DEFAULT_RESULTS_SIZE,
+            @Query("health") healthLabel: String
+    ): Call<EdamamSearchResults>
+
+    @GET("search")
+    fun search(
+            @Query("q") query: String,
+            @Query("app_id") appId: String = appId(),
+            @Query("app_key") appKey: String = appKey(),
+            @Query("from") firstIdx: Int = 0,
+            @Query("to") lastIdx: Int = firstIdx + DEFAULT_RESULTS_SIZE,
+            @Query("health") healthLabel: String,
+            @Query("diet") dietLabel: String
+    ): Call<EdamamSearchResults>
+
+    @GET("search")
     fun findById(
             @Query("r") id: String,
             @Query("app_id") appId: String = appId(),

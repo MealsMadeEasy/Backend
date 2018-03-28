@@ -1,6 +1,7 @@
 package com.mealsmadeeasy.data
 
 import com.mealsmadeeasy.FirebaseInstance
+import com.mealsmadeeasy.model.FilterGroup
 import com.mealsmadeeasy.model.Meal
 import com.mealsmadeeasy.model.Recipe
 import com.mealsmadeeasy.utils.firstBlocking
@@ -31,6 +32,21 @@ object FirebaseMealProvider : MealStore.MealProvider {
         }
 
         return db["recipes$mealId"].firstBlocking<Recipe>()
+    }
+
+    override fun search(query: String, filters: List<String>): List<Meal> {
+        if (filters.isNotEmpty()) {
+            return emptyList()
+        }
+
+        val queryParts = query.split(" ").filter { it.isNotBlank() }.map { it.toLowerCase() }
+        return db["meals"].firstBlockingList<Meal>().orEmpty().filter { it.matches(queryParts) }
+    }
+
+    override fun getAvailableFilters(): List<FilterGroup> = emptyList()
+
+    private fun Meal.matches(words: List<String>): Boolean {
+        return words.all { it in name.toLowerCase() }
     }
 
 }

@@ -72,6 +72,20 @@ fun main(args: Array<String>) {
                 )
             }
 
+            get("/meals/search") {
+                call.sendResponse(ApiAccessManager.requireApiAccess(call)
+                        ?: MealStore.getSearchResults(
+                                query = call.request.queryParameters["q"],
+                                filterArgs = call.request.queryParameters["filters"]
+                        )
+                )
+            }
+
+            get("/meals/search/filters") {
+                call.sendResponse(ApiAccessManager.requireApiAccess(call)
+                        ?: MealStore.getAvailableFilters())
+            }
+
             get("/meal/{id}") {
                 call.sendResponse(ApiAccessManager.requireApiAccess(call)
                         ?: MealStore.getMeal(call.parameters["id"])

@@ -3,6 +3,7 @@ package com.mealsmadeeasy.data
 import com.mealsmadeeasy.auth.AuthManager
 import com.mealsmadeeasy.data.edamam.EdamamMealProvider
 import com.mealsmadeeasy.endpoint.Response
+import com.mealsmadeeasy.model.FilterGroup
 import com.mealsmadeeasy.model.Meal
 import com.mealsmadeeasy.model.Recipe
 import org.jetbrains.ktor.http.HttpStatusCode
@@ -69,6 +70,30 @@ object MealStore {
         )
     }
 
+    fun getSearchResults(query: String?, filterArgs: String?): Response {
+        if (query == null) {
+            return Response.ofError("Missing query argument", HttpStatusCode.BadRequest)
+        }
+        val filters = filterArgs.orEmpty().split(",").map { it.trim() }.filter { it.isNotBlank() }
+
+        return try {
+            Response.ofJson(providers.flatMap { it.search(query, filters) })
+        } catch (e: SearchQueryException) {
+            Response.ofError(e.message!!, e.responseCode)
+        }
+    }
+
+    fun getAvailableFilters(): Response {
+        return Response.ofJson(
+                providers.flatMap { it.getAvailableFilters() }
+                        .also { groups ->
+                            require(groups.distinctBy { it.groupId } == groups) {
+                                "Multiple groups exist with the same ID"
+                            }
+                        }
+        )
+    }
+
     interface MealProvider {
 
         fun getRandomMeals(count: Int): List<Meal>
@@ -76,6 +101,10 @@ object MealStore {
         fun findMealById(mealId: String): Meal?
 
         fun getRecipeForMeal(mealId: String): Recipe?
+
+        fun search(query: String, filters: List<String>): List<Meal>
+
+        fun getAvailableFilters(): List<FilterGroup>
 
     }
 
