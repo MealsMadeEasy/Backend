@@ -15,7 +15,7 @@ object FirebaseMealProvider : MealStore.MealProvider {
     private val ILLEGAL_CHARS = listOf('.', '#', '$', '[', ']')
 
     override fun getRandomMeals(count: Int): List<Meal> {
-        return db["meals"].firstBlockingList<Meal>().orEmpty()
+        return db["meals"].firstBlockingList<Meal>().orEmpty().shuffled().take(count)
     }
 
     override fun findMealById(mealId: String): Meal? {
