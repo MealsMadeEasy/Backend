@@ -9,17 +9,12 @@ import org.jetbrains.ktor.http.HttpStatusCode
 
 object ApiAccessManager {
 
-    private const val HEADER_TEST_AUTH = "ForceUsingTheNewApiValidationCheckToTestMyCodeDoNotPushThisFlagIntoAProductionBuild"
     private const val APP_ID_HEADER = "ApplicationID"
     private const val APP_KEY_HEADER = "ApiKey"
 
     private val db = FirebaseInstance.database
 
     fun requireApiAccess(call: ApplicationCall): Response? {
-        if (call.request.headers[HEADER_TEST_AUTH]?.toBoolean() != true) {
-            return null
-        }
-
         return requireApiAccess(
                 appId = call.request.headers[APP_ID_HEADER],
                 apiKey = call.request.headers[APP_KEY_HEADER]
