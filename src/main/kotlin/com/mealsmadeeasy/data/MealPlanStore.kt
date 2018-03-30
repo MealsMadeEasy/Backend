@@ -19,11 +19,11 @@ object MealPlanStore {
     private val db = FirebaseInstance.database
 
     fun getMealPlan(userToken: String?): Response {
-        val today = DateTime.now().withTimeAtStartOfDay()
+        val yesterday = DateTime.now().minusDays(1).withTimeAtStartOfDay()
         return AuthManager.ensureValidUser(userToken) { userId ->
             Response.ofJson(getCurrentMealPlan(userId).let { plan ->
                 plan.copy(meals = plan.meals.filter {
-                    !it.date.toDate().isBefore(today)
+                    !it.date.toDate().isBefore(yesterday)
                 })
             })
         }
@@ -44,15 +44,15 @@ object MealPlanStore {
             )
         }
 
-        val today = DateTime.now().withTimeAtStartOfDay()
+        val yesterday = DateTime.now().minusDays(1).withTimeAtStartOfDay()
         return AuthManager.ensureValidUser(userToken) { userId ->
             val updated = getFirebaseMealPlan(userId).let { plan ->
                 val oldMeals = plan.meals.filter {
-                    it.date.toDate().isBefore(today)
+                    it.date.toDate().isBefore(yesterday)
                 }
 
                 val newMeals = mealPlan.meals.filter {
-                    !it.date.toDate().isBefore(today)
+                    !it.date.toDate().isBefore(yesterday)
                 }
 
                 plan.copy(meals = oldMeals + newMeals)
