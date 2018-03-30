@@ -9,8 +9,10 @@ import com.mealsmadeeasy.model.MealPlan
 import com.mealsmadeeasy.model.toDate
 import com.mealsmadeeasy.utils.firstBlocking
 import com.mealsmadeeasy.utils.get
+import com.mealsmadeeasy.utils.notDivisibleBy
 import org.jetbrains.ktor.http.HttpStatusCode
 import org.joda.time.DateTime
+import java.util.concurrent.TimeUnit
 
 object MealPlanStore {
 
@@ -31,6 +33,13 @@ object MealPlanStore {
         if (mealPlan == null) {
             return Response.ofError(
                     "Missing meal plan parameter",
+                    HttpStatusCode.BadRequest
+            )
+        }
+
+        if (mealPlan.meals.any { it.date notDivisibleBy TimeUnit.DAYS.toMillis(1) }) {
+            return Response.ofError(
+                    "All meal plan entries must have a time of midnight in UTC",
                     HttpStatusCode.BadRequest
             )
         }
