@@ -15,12 +15,19 @@ object FirebaseMealProvider : MealStore.MealProvider {
 
     private val ILLEGAL_CHARS = listOf('.', '#', '$', '[', ']')
 
+    private val enableApiRequests: Boolean
+        get() = FirebaseInstance.database["enableFirebaseMeals"].firstBlocking() ?: false
+
     override fun getRandomMeals(count: Int): List<Meal> {
+        if (!enableApiRequests) {
+            return emptyList()
+        }
+
         return db["meals"].firstBlockingList<Meal>().orEmpty().shuffled().take(count)
     }
 
     override fun findMealById(mealId: String): Meal? {
-        if (mealId.any { it in ILLEGAL_CHARS }) {
+        if (!enableApiRequests || mealId.any { it in ILLEGAL_CHARS }) {
             return null
         }
 
@@ -28,7 +35,7 @@ object FirebaseMealProvider : MealStore.MealProvider {
     }
 
     override fun getRecipeForMeal(mealId: String): Recipe? {
-        if (mealId.any { it in ILLEGAL_CHARS }) {
+        if (!enableApiRequests || mealId.any { it in ILLEGAL_CHARS }) {
             return null
         }
 
@@ -36,7 +43,7 @@ object FirebaseMealProvider : MealStore.MealProvider {
     }
 
     override fun search(query: String, filters: List<String>): List<Meal> {
-        if (filters.isNotEmpty()) {
+        if (!enableApiRequests || filters.isNotEmpty()) {
             return emptyList()
         }
 
@@ -47,6 +54,10 @@ object FirebaseMealProvider : MealStore.MealProvider {
     override fun getAvailableFilters(): List<FilterGroup> = emptyList()
 
     override fun getIngredients(mealId: String): List<Ingredient>? {
+        if (!enableApiRequests) {
+            return null
+        }
+
         return when {
             mealId.any { it in ILLEGAL_CHARS } -> return null
             db["meals/$mealId"].firstBlocking<Meal>() != null -> emptyList()
