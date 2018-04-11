@@ -1,9 +1,6 @@
 package com.mealsmadeeasy
 
-import com.mealsmadeeasy.data.ApiAccessManager
-import com.mealsmadeeasy.data.MealPlanStore
-import com.mealsmadeeasy.data.MealStore
-import com.mealsmadeeasy.data.UserStore
+import com.mealsmadeeasy.data.*
 import com.mealsmadeeasy.endpoint.sendResponse
 import com.mealsmadeeasy.utils.parseJson
 import org.jetbrains.ktor.host.embeddedServer
@@ -12,9 +9,7 @@ import org.jetbrains.ktor.http.HttpStatusCode
 import org.jetbrains.ktor.netty.Netty
 import org.jetbrains.ktor.request.receive
 import org.jetbrains.ktor.response.respondText
-import org.jetbrains.ktor.routing.get
-import org.jetbrains.ktor.routing.post
-import org.jetbrains.ktor.routing.routing
+import org.jetbrains.ktor.routing.*
 
 private val port: Int
     get() = System.getenv("PORT")?.toIntOrNull() ?: 80
@@ -60,6 +55,14 @@ fun main(args: Array<String>) {
                         ?: MealPlanStore.updateMealPlan(
                                 userToken = call.request.headers[AUTH_HEADER_KEY],
                                 mealPlan =  call.receive<String>().parseJson()
+                        )
+                )
+            }
+
+            get("/user/groceries") {
+                call.sendResponse(ApiAccessManager.requireApiAccess(call)
+                        ?: GroceryListManager.getGroceryList(
+                                userToken = call.request.headers[AUTH_HEADER_KEY]
                         )
                 )
             }

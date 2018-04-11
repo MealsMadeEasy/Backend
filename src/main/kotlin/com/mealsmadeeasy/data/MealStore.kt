@@ -4,6 +4,7 @@ import com.mealsmadeeasy.auth.AuthManager
 import com.mealsmadeeasy.data.edamam.EdamamMealProvider
 import com.mealsmadeeasy.endpoint.Response
 import com.mealsmadeeasy.model.FilterGroup
+import com.mealsmadeeasy.model.Ingredient
 import com.mealsmadeeasy.model.Meal
 import com.mealsmadeeasy.model.Recipe
 import org.jetbrains.ktor.http.HttpStatusCode
@@ -94,6 +95,12 @@ object MealStore {
         )
     }
 
+    fun getIngredients(mealId: String): List<Ingredient>? {
+        return providers.asSequence()
+                .mapNotNull { it.getIngredients(mealId) }
+                .firstOrNull()
+    }
+
     interface MealProvider {
 
         fun getRandomMeals(count: Int): List<Meal>
@@ -105,6 +112,8 @@ object MealStore {
         fun search(query: String, filters: List<String>): List<Meal>
 
         fun getAvailableFilters(): List<FilterGroup>
+
+        fun getIngredients(mealId: String): List<Ingredient>?
 
     }
 

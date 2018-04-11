@@ -2,6 +2,7 @@ package com.mealsmadeeasy.data
 
 import com.mealsmadeeasy.FirebaseInstance
 import com.mealsmadeeasy.model.FilterGroup
+import com.mealsmadeeasy.model.Ingredient
 import com.mealsmadeeasy.model.Meal
 import com.mealsmadeeasy.model.Recipe
 import com.mealsmadeeasy.utils.firstBlocking
@@ -44,6 +45,14 @@ object FirebaseMealProvider : MealStore.MealProvider {
     }
 
     override fun getAvailableFilters(): List<FilterGroup> = emptyList()
+
+    override fun getIngredients(mealId: String): List<Ingredient>? {
+        return when {
+            mealId.any { it in ILLEGAL_CHARS } -> return null
+            db["meals/$mealId"].firstBlocking<Meal>() != null -> emptyList()
+            else -> null
+        }
+    }
 
     private fun Meal.matches(words: List<String>): Boolean {
         return words.all { it in name.toLowerCase() }

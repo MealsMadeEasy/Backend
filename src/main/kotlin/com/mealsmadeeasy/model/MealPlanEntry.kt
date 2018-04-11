@@ -20,4 +20,15 @@ data class FirebaseMealPlanEntry(
                 meals = meals.mapNotNull { it.toMealPortion() })
     }
 
+    operator fun minus(mealPortions: List<FirebaseMealPortion>): FirebaseMealPlanEntry {
+        val newServings = mealPortions.map { it.mealId to it.servings }.toMap()
+                .mapValues { (meal, servings) ->
+                    servings.toLong() - mealPortions.filter { it.mealId == meal }.sumBy { it.servings }
+                }
+
+        return copy(meals = newServings.map { (mealId, servings) ->
+            FirebaseMealPortion(mealId, servings.toInt()) }
+        )
+    }
+
 }

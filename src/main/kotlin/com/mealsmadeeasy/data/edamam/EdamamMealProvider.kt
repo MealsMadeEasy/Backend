@@ -8,10 +8,7 @@ import com.mealsmadeeasy.data.edamam.model.EdamamRecipe
 import com.mealsmadeeasy.data.edamam.model.HealthLabels
 import com.mealsmadeeasy.data.edamam.service.createEdamamApi
 import com.mealsmadeeasy.data.mercury.MercuryParser
-import com.mealsmadeeasy.model.Filter
-import com.mealsmadeeasy.model.FilterGroup
-import com.mealsmadeeasy.model.Meal
-import com.mealsmadeeasy.model.Recipe
+import com.mealsmadeeasy.model.*
 import com.mealsmadeeasy.utils.firstBlocking
 import com.mealsmadeeasy.utils.get
 import org.jetbrains.ktor.http.HttpStatusCode
@@ -20,6 +17,9 @@ object EdamamMealProvider : MealStore.MealProvider {
 
     private const val ID_PREFIX = "edamam/"
     private val service = createEdamamApi()
+
+    // I'm so sorry.
+    private val ingredientQuantityRegex = """(([1-9][0-9]*(\.[0-9]+)?\s?)|(([1-9][0-9]*/[1-9][0-9]*|[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒])\s?))+(x|lb|tsp|tbsp|cup|oz|g|teaspoon|teaspoons|pound|\s+)[.s]*\s""".toRegex()
 
     private val enableApiRequests: Boolean
         get() = FirebaseInstance.database["enableEdamam"].firstBlocking() ?: false
@@ -134,6 +134,29 @@ object EdamamMealProvider : MealStore.MealProvider {
         )
     }
 
+    override fun getIngredients(mealId: String): List<Ingredient>? {
+        if (!mealId.startsWith(ID_PREFIX) || !enableApiRequests) {
+            return null
+        }
+
+        return service.findById(id = mealId.substringAfter(ID_PREFIX))
+                .execute()
+                .body()
+                ?.firstOrNull()
+                ?.ingredients
+                ?.map {
+                    Ingredient(
+                            quantity = it.weight,
+                            unit = "grams",
+                            name = it.text.toLowerCase()
+                                    .replace(""",.*""".toRegex(), "")
+                                    .replace("""\(.*\)""".toRegex(), "")
+                                    .replace(ingredientQuantityRegex, "")
+                                    .replace("""[^a-z\s'%#\-]""", "")
+                                    .trim()
+                    )
+                }
+    }
 
     private fun EdamamRecipe.toMeal(): Meal {
         return Meal(
