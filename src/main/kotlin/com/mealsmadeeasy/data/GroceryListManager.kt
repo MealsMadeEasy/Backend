@@ -89,6 +89,52 @@ object GroceryListManager {
                 .filter { it.requiredQuantity > 0.001f }
     }
 
+    fun markPurchased(userToken: String?, ingredient: Ingredient?): Response {
+        if (ingredient == null) {
+            return Response.ofError("No ingredient was provided", HttpStatusCode.BadRequest)
+        }
+
+        return AuthManager.ensureValidUser(userToken) { userId ->
+            val groceryList = db["groceries/$userId"]
+                    .firstBlockingList<GroceryListItem>()
+                    .orEmpty()
+                    .map { item ->
+                        if (item.offer(ingredient)) {
+                            item.copy(purchasedQuantity = item.requiredQuantity)
+                        } else {
+                            item
+                        }
+                    }
+
+            db["groceries/$userId"].setValue(groceryList).block()
+
+            return@ensureValidUser Response.ofStatus("Ok")
+        }
+    }
+
+    fun markUnpurchased(userToken: String?, ingredient: Ingredient?): Response {
+        if (ingredient == null) {
+            return Response.ofError("No ingredient was provided", HttpStatusCode.BadRequest)
+        }
+
+        return AuthManager.ensureValidUser(userToken) { userId ->
+            val groceryList = db["groceries/$userId"]
+                    .firstBlockingList<GroceryListItem>()
+                    .orEmpty()
+                    .map { item ->
+                        if (item.offer(ingredient)) {
+                            item.copy(purchasedQuantity = 0f)
+                        } else {
+                            item
+                        }
+                    }
+
+            db["groceries/$userId"].setValue(groceryList).block()
+
+            return@ensureValidUser Response.ofStatus("Ok")
+        }
+    }
+
     private data class GroceryListItem(
             val name: String,
             val purchasedQuantity: Float,

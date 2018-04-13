@@ -67,6 +67,24 @@ fun main(args: Array<String>) {
                 )
             }
 
+            put("/user/groceries/purchased") {
+                call.sendResponse(ApiAccessManager.requireApiAccess(call)
+                        ?: GroceryListManager.markPurchased(
+                                userToken = call.request.headers[AUTH_HEADER_KEY],
+                                ingredient = call.receive<String>().parseJson()
+                        )
+                )
+            }
+
+            delete("/user/groceries/purchased") {
+                call.sendResponse(ApiAccessManager.requireApiAccess(call)
+                        ?: GroceryListManager.markUnpurchased(
+                                userToken = call.request.headers[AUTH_HEADER_KEY],
+                                ingredient = call.receive<String>().parseJson()
+                        )
+                )
+            }
+
             get("/meals/suggested") {
                 call.sendResponse(ApiAccessManager.requireApiAccess(call)
                         ?: MealStore.getSuggestedMeals(
