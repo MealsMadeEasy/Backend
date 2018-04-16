@@ -9,6 +9,7 @@ import com.mealsmadeeasy.data.edamam.model.HealthLabels
 import com.mealsmadeeasy.data.edamam.service.createEdamamApi
 import com.mealsmadeeasy.data.mercury.MercuryParser
 import com.mealsmadeeasy.model.*
+import com.mealsmadeeasy.utils.block
 import com.mealsmadeeasy.utils.firstBlocking
 import com.mealsmadeeasy.utils.get
 import org.jetbrains.ktor.http.HttpStatusCode
@@ -16,7 +17,7 @@ import org.jetbrains.ktor.http.HttpStatusCode
 object EdamamMealProvider : MealStore.MealProvider {
 
     private const val ID_PREFIX = "edamam/"
-    private val service = createEdamamApi()
+    private val service = CachedEdamam(createEdamamApi())
 
     // I'm so sorry.
     private val ingredientQuantityRegex = """(([1-9][0-9]*(\.[0-9]+)?\s?)|(([1-9][0-9]*/[1-9][0-9]*|[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒])\s?))+(x|lb|tsp|tbsp|cup|oz|g|teaspoon|teaspoons|pound|\s+)[.s]*\s""".toRegex()
@@ -29,11 +30,10 @@ object EdamamMealProvider : MealStore.MealProvider {
             return emptyList()
         }
 
-        return service.search(query = "Tacos", firstIdx = 0, lastIdx = count)
-                .execute()
-                .body()
-                ?.hits
-                .orEmpty()
+        return service.search(query = "Tacos")
+                .block()
+                .hits
+                .take(count)
                 .map { it.recipe }
                 .map { it.toMeal() }
     }
@@ -44,9 +44,8 @@ object EdamamMealProvider : MealStore.MealProvider {
         }
 
         return service.findById(id = mealId.substringAfter(ID_PREFIX))
-                .execute()
-                .body()
-                ?.firstOrNull()
+                .block()
+                .firstOrNull()
                 ?.toMeal()
     }
 
@@ -56,9 +55,8 @@ object EdamamMealProvider : MealStore.MealProvider {
         }
 
         return service.findById(id = mealId.substringAfter(ID_PREFIX))
-                .execute()
-                .body()
-                ?.firstOrNull()
+                .block()
+                .firstOrNull()
                 ?.url
                 ?.let {
                     Recipe(MercuryParser.parseWebsite(it).content)
@@ -98,10 +96,8 @@ object EdamamMealProvider : MealStore.MealProvider {
                 service.search(query = query)
             }
         }.let { call ->
-            call.execute()
-                    .body()
-                    ?.hits
-                    .orEmpty()
+            call.block()
+                    .hits
                     .map { it.recipe }
                     .map { it.toMeal() }
         }
@@ -140,9 +136,8 @@ object EdamamMealProvider : MealStore.MealProvider {
         }
 
         return service.findById(id = mealId.substringAfter(ID_PREFIX))
-                .execute()
-                .body()
-                ?.firstOrNull()
+                .block()
+                .firstOrNull()
                 ?.ingredients
                 ?.map {
                     Ingredient(
