@@ -6,7 +6,7 @@ Before you begin, note that this server is hosted on Heroku at `https://meals-ma
 ### Prerequisites
  - You must have version 1.8 or higher of the [Java runtime (JRE)](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) and the [Java development kit (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
  - Before running the server, you'll need access to a [Firebase](https://console.firebase.google.com/) project's Admin account credentials, a [Mercury](https://mercury.postlight.com/web-parser/) API key, and an [Edamam](https://developer.edamam.com/edamam-recipe-api) API key.
-    - If you want to create a new Firebase project, you can these values by navigating to [Service Accounts](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk?authuser=0). Then click "Generate New Private Key" at the bottom of the "Firebase Admin SDK" to generate a new key, which you'll use in the installation step.
+    - If you want to create a new Firebase project, you can obtain these values by navigating to [Service Accounts](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk?authuser=0). Then click "Generate New Private Key" at the bottom of the "Firebase Admin SDK" to generate a new key, which you'll use in the installation step.
     - To get an API key for other platforms, follow the registration steps on the corresponding website to get started.
     - **Note:** It's very important to keep these values private to prevent attackers from abusing the system.
 
@@ -46,3 +46,8 @@ Before you begin, note that this server is hosted on Heroku at `https://meals-ma
  - Launch the application by typing `java -jar mealsmadeeasy-1.0.jar`.
  - The server will start on port 80 and will fulfill any requests sent to the host.
  - To stop the server, press `ctrl + C` on Windows or `control + C` on MacOS.
+ 
+ ### Common Issues
+  - When running the server, if you receive an error stating "Address already in use," then there is another application running on port 80. Stop all other applications that may be using that port, including instances of the server that may be running in the background. Rebooting the computer should stop any such applications. Once there are no applications running on the port, you can restart the server.
+  - If the server returns 500 errors for requests that lookup meals, verify that the Edamam API key and appId are correctly specified in environment variables.
+  - If the server displays a warning about missing Firebase credentials, verify that the Firebase API keys have been correctly specified in environment variables. Additionally, ensure that the keys are valid and have not been revoked on the Firebase Dashboard.
