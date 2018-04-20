@@ -1,5 +1,8 @@
 # Meals Made Easy Backend API
 
+## Documentation
+All documentation of the APIs provided by this application are available [on the wiki of this repo](https://github.com/MealsMadeEasy/Backend/wiki). This is broken down by endpoint, and also contains information about API changes over time.
+
 ## Setup
 Before you begin, note that this server is hosted on Heroku at `https://meals-made-easy.herokuapp.com/`. You only need to follow these steps if you want to run the server on your own machine.
 
