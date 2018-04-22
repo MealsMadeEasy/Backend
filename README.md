@@ -54,3 +54,10 @@ Before you begin, note that this server is hosted on Heroku at `https://meals-ma
   - When running the server, if you receive an error stating "Address already in use," then there is another application running on port 80. Stop all other applications that may be using that port, including instances of the server that may be running in the background. Rebooting the computer should stop any such applications. Once there are no applications running on the port, you can restart the server.
   - If the server returns 500 errors for requests that lookup meals, verify that the Edamam API key and appId are correctly specified in environment variables.
   - If the server displays a warning about missing Firebase credentials, verify that the Firebase API keys have been correctly specified in environment variables. Additionally, ensure that the keys are valid and have not been revoked on the Firebase Dashboard.
+
+## Known Issues
+Due to time constraints and limited resources, there were a few minor bugs that were left unresolved in the final release. These particularly relate to the grocery list:
+ - Suggested meals do not take user preferences or habits into consideration. This was not implemented due to time constraints, but could be done retroactively as meal plan selections are saved indefinitely.
+ - All units in the grocery list are in grams. With a subscription to Edamam, it would be possible to use more relevant units, which is a limitation of our free Edamam API key.
+ - The grocery list does not combine similar ingredients. For example, if one ingredient calls for `minced garlic cloves` and another calls for `garlic cloves`, the ingredients will not be combined. This is a side effect of how ingredient names are processed, and may be resolved with an Edamam subscription.
+ - Similarly, the grocery list may contain extraneous or irrelevant information. For example, a recipe on Edamam may list one of the ingredients as `salt and pepper to taste`. Although this ingredient is immeasurable and could be omitted or simply expressed as `salt and pepper`, the server is not smart enough to make either adjustment.
