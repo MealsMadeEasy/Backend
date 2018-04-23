@@ -109,9 +109,11 @@ object EdamamMealProvider : MealStore.MealProvider {
         }
 
         val dietFilters = DietLabels.values()
+                .filter { !it.isPremium }
                 .map { Filter(it.webLabel, ID_PREFIX + it.apiParameter) }
 
         val healthFilters = HealthLabels.values()
+                .filter { !it.isPremium }
                 .map { Filter(it.webLabel, ID_PREFIX + it.apiParameter) }
 
         return listOf(
